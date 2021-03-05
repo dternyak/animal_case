@@ -160,9 +160,17 @@ class TestAnimalCase:
         assert converted["nestedKey"]["moreStuff"] == (1, 2, 3)
 
     def test_convert_dict_keys_to_snake_case_preserve_constant_case(self, camel_case_dict):
-        converted = animalify({**camel_case_dict, **{ 'FOURTH_KEY': 4 }}, 'snake', "^[A-Z0-9_]+$")
+        constant_dict = {**camel_case_dict, **{ 'FOURTH_KEY': 4 }}
+        constant_dict['thirdKey'].append({ 'SUB_THIRD_KEY_CONSTANT': 4 })
+        converted = animalify(constant_dict, 'snake', "^[A-Z0-9_]+$")
+
         assert 'FOURTH_KEY' in converted
+        assert 'SUB_THIRD_KEY_CONSTANT' in converted['third_key'][3]
 
     def test_convert_dict_keys_to_camel_case_preserve_constant_case(self, snake_case_dict):
-        converted = animalify({**snake_case_dict, **{ 'FOURTH_KEY': 4 }}, preserve_regex="^[A-Z0-9_]+$")
+        constant_dict = {**snake_case_dict, **{ 'FOURTH_KEY': 4 }}
+        constant_dict['third_key'].append({ 'SUB_THIRD_KEY_CONSTANT': 4 })
+        converted = animalify(constant_dict, preserve_regex="^[A-Z0-9_]+$")
+
         assert 'FOURTH_KEY' in converted
+        assert 'SUB_THIRD_KEY_CONSTANT' in converted['thirdKey'][3]
