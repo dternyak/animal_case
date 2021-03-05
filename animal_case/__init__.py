@@ -103,11 +103,11 @@ def animalify(*args, **kwargs):
     if type(data) == dict:
         for key, value in _unpack(formatter(data, preserve_regex=preserve_regex)):
             if isinstance(value, dict):
-                formatted[key] = animalify(value, types)
+                formatted[key] = animalify(value, types, preserve_regex)
             elif isinstance(value, list) and len(value) > 0:
                 formatted[key] = []
                 for _, val in enumerate(value):
-                    formatted[key].append(animalify(val, types))
+                    formatted[key].append(animalify(val, types, preserve_regex))
             else:
                 formatted[key] = value
         return formatted
@@ -115,11 +115,11 @@ def animalify(*args, **kwargs):
     else:
         for i, each in enumerate(data):
             if isinstance(each, dict):
-                formatted.append(animalify(each, types))
+                formatted.append(animalify(each, types, preserve_regex))
             elif isinstance(each, list) and len(each) > 0:
                 formatted.append([])
                 for _, val in enumerate(each):
-                    formatted[i].append(animalify(val, types))
+                    formatted[i].append(animalify(val, types, preserve_regex))
             else:
                 formatted.append(each)
         return formatted
