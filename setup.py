@@ -2,7 +2,7 @@ from distutils.core import setup
 
 setup(
     name='animal_case',
-    version='0.5.0',
+    version='0.5.2',
     author='Rafael Acioly, Daniel Ternyak',
     author_email='dternyak@gmail.com',
     packages=['animal_case'],
