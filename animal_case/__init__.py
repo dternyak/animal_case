@@ -61,6 +61,7 @@ def animalify(*args, **kwargs):
     """
     types = 'camel'
     preserve_regex = None
+    preserve_children = {}
 
     if len(args) > 3:
         raise ValueError("Invalid number of arguments")
@@ -70,7 +71,6 @@ def animalify(*args, **kwargs):
     
     if len(args) == 3:
         preserve_regex = args[2]
-        
 
     if kwargs.get('types'):
         types = kwargs.get('types')
@@ -79,6 +79,10 @@ def animalify(*args, **kwargs):
     if kwargs.get('preserve_regex'):
         preserve_regex = kwargs.get('preserve_regex')
         del kwargs['preserve_regex']
+
+    if kwargs.get('preserve_children'):
+        preserve_children = kwargs.get('preserve_children')
+        del kwargs['preserve_children']
 
     if types not in ('snake', 'camel'):
         raise ValueError("Invalid parse type, use snake or camel")
@@ -103,7 +107,10 @@ def animalify(*args, **kwargs):
     if type(data) == dict:
         for key, value in _unpack(formatter(data, preserve_regex=preserve_regex)):
             if isinstance(value, dict):
-                formatted[key] = animalify(value, types, preserve_regex)
+                if key not in preserve_children:
+                    formatted[key] = animalify(value, types, preserve_regex)
+                else:
+                    formatted[key] = value
             elif isinstance(value, list) and len(value) > 0:
                 formatted[key] = []
                 for _, val in enumerate(value):
