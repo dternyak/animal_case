@@ -63,7 +63,7 @@ def animalify(*args, **kwargs):
     preserve_regex = None
     preserve_children = {}
 
-    if len(args) > 3:
+    if len(args) > 4:
         raise ValueError("Invalid number of arguments")
 
     if len(args) >= 2:
@@ -71,6 +71,9 @@ def animalify(*args, **kwargs):
     
     if len(args) == 3:
         preserve_regex = args[2]
+
+    if len(args) == 4:
+        preserve_children = args[3]
 
     if kwargs.get('types'):
         types = kwargs.get('types')
@@ -108,13 +111,13 @@ def animalify(*args, **kwargs):
         for key, value in _unpack(formatter(data, preserve_regex=preserve_regex)):
             if isinstance(value, dict):
                 if key not in preserve_children:
-                    formatted[key] = animalify(value, types, preserve_regex)
+                    formatted[key] = animalify(value, types, preserve_regex, preserve_children)
                 else:
                     formatted[key] = value
             elif isinstance(value, list) and len(value) > 0:
                 formatted[key] = []
                 for _, val in enumerate(value):
-                    formatted[key].append(animalify(val, types, preserve_regex))
+                    formatted[key].append(animalify(val, types, preserve_regex, preserve_children))
             else:
                 formatted[key] = value
         return formatted
@@ -122,11 +125,11 @@ def animalify(*args, **kwargs):
     else:
         for i, each in enumerate(data):
             if isinstance(each, dict):
-                formatted.append(animalify(each, types, preserve_regex))
+                formatted.append(animalify(each, types, preserve_regex, preserve_children))
             elif isinstance(each, list) and len(each) > 0:
                 formatted.append([])
                 for _, val in enumerate(each):
-                    formatted[i].append(animalify(val, types, preserve_regex))
+                    formatted[i].append(animalify(val, types, preserve_regex, preserve_children))
             else:
                 formatted.append(each)
         return formatted
